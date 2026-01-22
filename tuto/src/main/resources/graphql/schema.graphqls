@@ -1,0 +1,18 @@
+type Product {
+    id: ID
+    name: String
+    price: Float
+}
+
+# Lecture (Read)
+type Query {
+    findAllProducts: [Product]
+    findProductById(id: ID!): Product
+}
+
+# Ecriture (Create, Update, Delete)
+type Mutation {
+    saveProduct(name: String!, price: Float!): Product
+    updateProduct(id: ID!, name: String, price: Float): Product
+    deleteProduct(id: ID!): Boolean
+}
