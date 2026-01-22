@@ -1,0 +1,78 @@
+<div class="product-crud">
+  <h2>Product Management</h2>
+
+  <!-- Add Product Form -->
+  <div class="add-product card">
+    <h3>Add New Product</h3>
+    <form (ngSubmit)="addProduct()" #addForm="ngForm" class="form-grid">
+      <div class="form-group">
+        <label for="name">Product Name:</label>
+        <input type="text" id="name" [(ngModel)]="newProduct.name" name="name" required placeholder="Enter product name">
+      </div>
+      <div class="form-group">
+        <label for="price">Price ($):</label>
+        <input type="number" id="price" [(ngModel)]="newProduct.price" name="price" required min="0" step="0.01" placeholder="0.00">
+      </div>
+      <div class="form-actions">
+        <button type="submit" [disabled]="!addForm.form.valid || saving" class="btn btn-primary">
+          <span *ngIf="saving">Adding...</span>
+          <span *ngIf="!saving">Add Product</span>
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Products List -->
+  <div class="products-list card">
+    <h3>Products <button (click)="loadProducts()" class="btn btn-secondary refresh-btn" [disabled]="loading">Refresh</button></h3>
+
+    <div *ngIf="loading" class="loading">Loading products...</div>
+
+    <div *ngIf="!loading && products.length === 0" class="no-products">
+      No products found. Add your first product above!
+    </div>
+
+    <table *ngIf="!loading && products.length > 0" class="products-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Price</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let product of products" [class.editing]="editingProduct?.id === product.id">
+          <td *ngIf="editingProduct?.id !== product.id">{{ product.id }}</td>
+          <td *ngIf="editingProduct?.id !== product.id">{{ product.name }}</td>
+          <td *ngIf="editingProduct?.id !== product.id">${{ product.price | number:'1.2-2' }}</td>
+          <td *ngIf="editingProduct?.id !== product.id" class="actions">
+            <button (click)="editProduct(product)" class="btn btn-edit">Edit</button>
+            <button (click)="deleteProduct(product.id)" class="btn btn-delete" [disabled]="deleting === product.id">
+              <span *ngIf="deleting === product.id">Deleting...</span>
+              <span *ngIf="deleting !== product.id">Delete</span>
+            </button>
+          </td>
+
+          <!-- Edit Row -->
+          <td *ngIf="editingProduct?.id === product.id" colspan="4">
+            <form (ngSubmit)="updateProduct()" #editForm="ngForm" class="edit-form">
+              <div class="edit-grid">
+                <span class="edit-id">{{ product.id }}</span>
+                <input type="text" [(ngModel)]="editingProduct!.name" name="editName" required placeholder="Product name">
+                <input type="number" [(ngModel)]="editingProduct!.price" name="editPrice" required min="0" step="0.01" placeholder="Price">
+                <div class="edit-actions">
+                  <button type="submit" [disabled]="!editForm.form.valid || updating" class="btn btn-primary">
+                    <span *ngIf="updating">Updating...</span>
+                    <span *ngIf="!updating">Update</span>
+                  </button>
+                  <button type="button" (click)="cancelEdit()" class="btn btn-secondary">Cancel</button>
+                </div>
+              </div>
+            </form>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
